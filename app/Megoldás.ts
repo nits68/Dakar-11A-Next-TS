@@ -82,9 +82,10 @@ export default class Megoldás {
   }
 
   constructor(forrás: string) {
-    const sorok: string[] = fs.readFileSync(forrás).toString().split("\r\n").slice(1);
+    const sorok: string[] = fs.readFileSync(forrás).toString().split("\n").slice(1);
     for (const sor of sorok) {
-      this.#eredmények.push(new Eredmény(sor));
+      const aktSor = sor.trim();
+      if (aktSor.length > 0) this.#eredmények.push(new Eredmény(aktSor));
     }
   }
 

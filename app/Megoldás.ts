@@ -90,12 +90,35 @@ export default class Megoldás {
   }
 
   kamiontípusokÍrása(állomány_neve: string): void {
-    // Rendezett szótár a kulcsok szerint:
-    // 1. lépés: Tömbbé alakítjuk a szótárunkat (Array.from(szótár)),
-    // 2. majd a szótár sort() metódusával rendezzük,
-    // 3. végül vissza szótárba(new Map(tömb))
-    // kulcsok elérése: a[0], b[0]
-    // értékek elérése: a[1], b[1]
+    // Tömbök rendezése
+    // =================
+    // number[], vagy string[] típusú tömb rendezése a sort() metódussal:
+    // növekvő sorrend: rendezettTömb: number[] = tömb.sort((a, b) => a - b);
+    // csökkenő sorrend: rendezettTömb: number[] = tömb.sort((a, b) => b - a);
+
+    // Fontos: A sort() metódus "helyben" (in place) rendez, azaz megváltoztatja a forrás tömböt, ezért nem szükséges új azonosítót (rendezettTömb) létrehozni a rendezett tömbnek, a régi azonosítót is használhatjuk
+
+    // Szótárak (Map) rendezése: szótár -> tömb -> rendezett_tömb -> szótár
+    // =====================================================================
+    // 1. lépés: Tömbbé alakítjuk a szótárunkat: Array.from(this.#kamionokStat), mert a sort() metódus csak tömbökön érhető el, szótáraknak nincs ilyen
+    
+    // 2. lépés: az új tömb sort() metódusával rendezzük az adatokat, a rendezés kulcsa a tömb elemeinek második eleme (ez volt korábban a szótárban a value),
+    // azaz itt a győzelmek száma  lesz: (a, b) => b[1] - a[1]
+    // példa a rendezendő tömbre: [["Kamion1", 3], ["Kamion2", 5], ["Kamion3", 2]]
+
+    // "a" és "b" a tömb egymás melletti elemeit jelölik, cserél, ha b[1] - a[1] negatív, nem cserél ha pozitív, vagy nulla
+    
+    // a szótár korábbi kulcsai a 0. indexekkel érhetők el az új tömbben: a[0], b[0]
+    // a szótár korábbi értékei az 1. indexekkel érhetők el az új tömbben: a[1], b[1]
+    // csökkenő sorrend értékek szerint: (a, b) => b[1] - a[1]
+    // növekvő sorrend értékek szerint (a, b) => a[1] - b[1]
+    // csökkenő sorrend kulcsok szerint: (a, b) => b[0] - a[0]
+    // növekvő sorrend kulcsok szerint: (a, b) => a[0] - b[0])
+    // Magyar "ábécé" rendezés string típusú kulcsok esetén: (a, b) => a[0].localeCompare(b[0])
+
+    // 3. lépés: végül a rendezett tömböt visszaalakítjuk szótára: rendezettSzótár = new Map(rendezett_tömb)
+    // Elvileg ez a lépés felesleges itt, mert a rendezett tömböt is bejárhatjuk for-of ciklussal
+   
     const sortedMap = new Map(Array.from(this.#kamionokStat).sort((a, b) => b[1] - a[1]));
     const ki: string[] = [];
     // rendezett szótár bejárása:
